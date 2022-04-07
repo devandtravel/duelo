@@ -539,7 +539,6 @@ DUELO.player = function () {
         if (JSON.stringify(obstacle) === JSON.stringify(next)) {
           console.log('must stop here', h)
           h = pos
-
           return true
         } else {
           return false
