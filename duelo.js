@@ -527,18 +527,24 @@ DUELO.player = function () {
   }
 
   // move to a given hexagon
-  that.move = function (h, callback) {
+  that.move = function (h, callback, hTemp = null) {
+    h = hTemp ? hTemp : h
     var i = h[0],
       j = h[1],
       next
     moving = true
+
+    hTemp = null
 
     if (pos[0] !== i || pos[1] !== j) {
       next = DUELO.board.nextHexagon(pos, h)
       board.obstacles.some(obstacle => {
         if (JSON.stringify(obstacle) === JSON.stringify(next)) {
           console.log('must stop here', h)
-          h = pos
+          // h = pos
+          hTemp = h
+          next = [pos[0] - 1, pos[1] + 1]
+
           return true
         } else {
           return false
@@ -548,7 +554,7 @@ DUELO.player = function () {
         console.log(next)
 
         that.translate(next, function () {
-          that.move(h, callback)
+          that.move(h, callback, hTemp)
         })
       })
     } else {
