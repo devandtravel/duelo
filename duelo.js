@@ -363,99 +363,116 @@ DUELO.board = (function () {
     return points
   }
 
+  that.neighbourIsObstacle = function (neighbour) {
+    if (
+      board.obstacles.some(obstacle => {
+        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
+          return true
+        } else {
+          return false
+        }
+      })
+    ) {
+      return true
+    }
+    return false
+  }
   // neighbour of h in a given direction
+  // that.neighbour = function (h, direction) {
+  //   var neighbour = []
+  //   if (direction === directions.N) {
+  //     neighbour = [h[0], h[1] - 1]
+  //     if (that.neighbourIsObstacle(neighbour)) {
+  //     } else {
+  //       return neighbour
+  //     }
+  //   } else if (direction === directions.S) {
+  //     neighbour = [h[0], h[1] + 1]
+  //     if (that.neighbourIsObstacle(neighbour)) {
+  //     } else {
+  //       return neighbour
+  //     }
+  //   } else if (direction === directions.NE) {
+  //     neighbour = [h[0] + 1, h[1] - Math.abs((h[0] + 1) % 2)]
+  //     if (that.neighbourIsObstacle(neighbour)) {
+  //     } else {
+  //       return neighbour
+  //     }
+  //   } else if (direction === directions.NW) {
+  //     neighbour = [h[0] - 1, h[1] - Math.abs((h[0] + 1) % 2)]
+
+  //     if (that.neighbourIsObstacle(neighbour)) {
+  //       that.neighbour(h, newDirection)
+  //     } else {
+  //       return neighbour
+  //     }
+  //   } else if (direction === directions.SE) {
+  //     neighbour = [h[0] + 1, h[1] + Math.abs(h[0] % 2)]
+
+  //     if (that.neighbourIsObstacle(neighbour)) {
+  //     } else {
+  //       return neighbour
+  //     }
+  //   } else if (direction === directions.SW) {
+  //     neighbour = [h[0] - 1, h[1] + Math.abs(h[0] % 2)]
+  //     if (that.neighbourIsObstacle(neighbour)) {
+  //     } else {
+  //       return neighbour
+  //     }
+  //   }
+  // }
   that.neighbour = function (h, direction) {
     var neighbour = []
-
     if (direction === directions.N) {
-      board.obstacles.some(obstacle => {
-        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
-          console.log('neighbour on N direction is obstacle, so rotate left', h)
-          neighbour = [h[0] - 1, h[1] - 1]
-          return true
-        } else {
-          neighbour = [h[0], h[1] - 1]
-          return false
-        }
-      })
+      neighbour = [h[0], h[1] - 1]
+      if (that.neighbourIsObstacle(neighbour)) {
+        neighbour = [h[0] + 1, h[1] - Math.abs((h[0] + 1) % 2)] // NE
+      } else {
+        return neighbour
+      }
       return neighbour
     } else if (direction === directions.S) {
-      board.obstacles.some(obstacle => {
-        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
-          console.log('neighbour on S direction is obstacle, rotate right', h)
-          neighbour = [h[0] + 1, h[1]]
-          return true
-        } else {
-          neighbour = [h[0], h[1] + 1]
-          return false
-        }
-      })
+      neighbour = [h[0], h[1] + 1]
+      if (that.neighbourIsObstacle(neighbour)) {
+        neighbour = [h[0] - 1, h[1] + Math.abs(h[0] % 2)] // SW
+      } else {
+        return neighbour
+      }
       return neighbour
     } else if (direction === directions.NE) {
-      board.obstacles.some(obstacle => {
-        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
-          console.log('neighbour on NE direction is obstacle, rotate left', h)
-          neighbour = [h[0], h[1] - 1]
-          return true
-        } else {
-          neighbour = [h[0] + 1, h[1] - Math.abs((h[0] + 1) % 2)]
-          return false
-        }
-      })
+      neighbour = [h[0] + 1, h[1] - Math.abs((h[0] + 1) % 2)]
+      if (that.neighbourIsObstacle(neighbour)) {
+        neighbour = [h[0] + 1, h[1] + Math.abs(h[0] % 2)] // SE
+      } else {
+        return neighbour
+      }
       return neighbour
     } else if (direction === directions.NW) {
-      board.obstacles.some(obstacle => {
-        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
-          console.log('neighbour on NW direction is obstacle, rotate right', h)
-          neighbour = [h[0], h[1] - 1]
-          return true
-        } else {
-          neighbour = [h[0] - 1, h[1] - Math.abs((h[0] + 1) % 2)]
-          return false
-        }
-      })
+      neighbour = [h[0] - 1, h[1] - Math.abs((h[0] + 1) % 2)]
+      if (that.neighbourIsObstacle(neighbour)) {
+        neighbour = [h[0], h[1] - 1] // N
+      } else {
+        return neighbour
+      }
       return neighbour
     } else if (direction === directions.SE) {
-      board.obstacles.some(obstacle => {
-        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
-          console.log('neighbour on SE direction is obstacle, rotate left', h)
-          neighbour = [h[0], h[1] + 1]
-          return true
-        } else {
-          neighbour = [h[0] + 1, h[1] + Math.abs(h[0] % 2)]
-          return false
-        }
-      })
+      neighbour = [h[0] + 1, h[1] + Math.abs(h[0] % 2)]
+      if (that.neighbourIsObstacle(neighbour)) {
+        neighbour = [h[0], h[1] + 1] // S
+      } else {
+        return neighbour
+      }
       return neighbour
     } else if (direction === directions.SW) {
-      board.obstacles.some(obstacle => {
-        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
-          console.log('neighbour on SW direction is obstacle, rotate right', h)
-          neighbour = [h[0], h[1] + 1]
-          return true
-        } else {
-          neighbour = [h[0] - 1, h[1] + Math.abs(h[0] % 2)]
-          return false
-        }
-      })
+      neighbour = [h[0] - 1, h[1] + Math.abs(h[0] % 2)]
+      if (that.neighbourIsObstacle(neighbour)) {
+        neighbour = [h[0] - 1, h[1] - Math.abs((h[0] + 1) % 2)] // NW
+      } else {
+        return neighbour
+      }
       return neighbour
     }
   }
-  // that.neighbour = function (h, direction) {
-  //   if (direction === directions.N) {
-  //     return [h[0], h[1] - 1]
-  //   } else if (direction === directions.S) {
-  //     return [h[0], h[1] + 1]
-  //   } else if (direction === directions.NE) {
-  //     return [h[0] + 1, h[1] - Math.abs((h[0] + 1) % 2)]
-  //   } else if (direction === directions.NW) {
-  //     return [h[0] - 1, h[1] - Math.abs((h[0] + 1) % 2)]
-  //   } else if (direction === directions.SE) {
-  //     return [h[0] + 1, h[1] + Math.abs(h[0] % 2)]
-  //   } else if (direction === directions.SW) {
-  //     return [h[0] - 1, h[1] + Math.abs(h[0] % 2)]
-  //   }
-  // }
 
   // next Hexagon between h1 and h2
   that.nextHexagon = function (h1, h2) {
