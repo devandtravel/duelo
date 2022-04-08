@@ -365,20 +365,97 @@ DUELO.board = (function () {
 
   // neighbour of h in a given direction
   that.neighbour = function (h, direction) {
+    var neighbour = []
+
     if (direction === directions.N) {
-      return [h[0], h[1] - 1]
+      board.obstacles.some(obstacle => {
+        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
+          console.log('neighbour on N direction is obstacle, so rotate left', h)
+          neighbour = [h[0] - 1, h[1] - 1]
+          return true
+        } else {
+          neighbour = [h[0], h[1] - 1]
+          return false
+        }
+      })
+      return neighbour
     } else if (direction === directions.S) {
-      return [h[0], h[1] + 1]
+      board.obstacles.some(obstacle => {
+        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
+          console.log('neighbour on S direction is obstacle, rotate right', h)
+          neighbour = [h[0] + 1, h[1]]
+          return true
+        } else {
+          neighbour = [h[0], h[1] + 1]
+          return false
+        }
+      })
+      return neighbour
     } else if (direction === directions.NE) {
-      return [h[0] + 1, h[1] - Math.abs((h[0] + 1) % 2)]
+      board.obstacles.some(obstacle => {
+        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
+          console.log('neighbour on NE direction is obstacle, rotate left', h)
+          neighbour = [h[0], h[1] - 1]
+          return true
+        } else {
+          neighbour = [h[0] + 1, h[1] - Math.abs((h[0] + 1) % 2)]
+          return false
+        }
+      })
+      return neighbour
     } else if (direction === directions.NW) {
-      return [h[0] - 1, h[1] - Math.abs((h[0] + 1) % 2)]
+      board.obstacles.some(obstacle => {
+        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
+          console.log('neighbour on NW direction is obstacle, rotate right', h)
+          neighbour = [h[0], h[1] - 1]
+          return true
+        } else {
+          neighbour = [h[0] - 1, h[1] - Math.abs((h[0] + 1) % 2)]
+          return false
+        }
+      })
+      return neighbour
     } else if (direction === directions.SE) {
-      return [h[0] + 1, h[1] + Math.abs(h[0] % 2)]
+      board.obstacles.some(obstacle => {
+        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
+          console.log('neighbour on SE direction is obstacle, rotate left', h)
+          neighbour = [h[0], h[1] + 1]
+          return true
+        } else {
+          neighbour = [h[0] + 1, h[1] + Math.abs(h[0] % 2)]
+          return false
+        }
+      })
+      return neighbour
     } else if (direction === directions.SW) {
-      return [h[0] - 1, h[1] + Math.abs(h[0] % 2)]
+      board.obstacles.some(obstacle => {
+        if (JSON.stringify(obstacle) === JSON.stringify(neighbour)) {
+          console.log('neighbour on SW direction is obstacle, rotate right', h)
+          neighbour = [h[0], h[1] + 1]
+          return true
+        } else {
+          neighbour = [h[0] - 1, h[1] + Math.abs(h[0] % 2)]
+          return false
+        }
+      })
+      return neighbour
     }
   }
+  // that.neighbour = function (h, direction) {
+  //   if (direction === directions.N) {
+  //     return [h[0], h[1] - 1]
+  //   } else if (direction === directions.S) {
+  //     return [h[0], h[1] + 1]
+  //   } else if (direction === directions.NE) {
+  //     return [h[0] + 1, h[1] - Math.abs((h[0] + 1) % 2)]
+  //   } else if (direction === directions.NW) {
+  //     return [h[0] - 1, h[1] - Math.abs((h[0] + 1) % 2)]
+  //   } else if (direction === directions.SE) {
+  //     return [h[0] + 1, h[1] + Math.abs(h[0] % 2)]
+  //   } else if (direction === directions.SW) {
+  //     return [h[0] - 1, h[1] + Math.abs(h[0] % 2)]
+  //   }
+  // }
 
   // next Hexagon between h1 and h2
   that.nextHexagon = function (h1, h2) {
@@ -527,23 +604,19 @@ DUELO.player = function () {
   }
 
   // move to a given hexagon
-  that.move = function (h, callback, hTemp = null) {
-    h = hTemp ? hTemp : h
+  that.move = function (h, callback) {
     var i = h[0],
       j = h[1],
       next
     moving = true
-
-    hTemp = null
 
     if (pos[0] !== i || pos[1] !== j) {
       next = DUELO.board.nextHexagon(pos, h)
       board.obstacles.some(obstacle => {
         if (JSON.stringify(obstacle) === JSON.stringify(next)) {
           console.log('must stop here', h)
-          // h = pos
-          hTemp = h
-          next = [pos[0] - 1, pos[1] + 1]
+
+          // next = [pos[0], pos[1] - 1]
 
           return true
         } else {
@@ -554,7 +627,7 @@ DUELO.player = function () {
         console.log(next)
 
         that.translate(next, function () {
-          that.move(h, callback, hTemp)
+          that.move(h, callback)
         })
       })
     } else {
